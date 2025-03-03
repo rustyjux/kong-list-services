@@ -5,36 +5,32 @@ local ListServicesHandler = {}
 ListServicesHandler.PRIORITY = 1000
 ListServicesHandler.VERSION = "1.0.0"
 
+function ListServicesHandler:init_worker()
+    kong.log.info("🔹 [init_worker] Plugin initialized successfully.")
+end
+
+function ListServicesHandler:certificate(conf)
+    kong.log.info("🔹 [certificate] kong.log is working.")
+end
+
+function ListServicesHandler:rewrite(conf)
+    kong.log.info("🔹 [rewrite] kong.log is working.")
+end
+
 function ListServicesHandler:access(conf)
-    kong.log.info("🚀 list-services plugin executing...")
+    kong.log.info("🚀 [access] Plugin executing...")
+end
 
-    if not kong.db then
-        kong.log.err("🚨 kong.db is NIL! This should not happen in DB mode.")
-        return kong.response.exit(500, { error = "Database is not available in this Kong instance." })
-    end
+function ListServicesHandler:header_filter(conf)
+    kong.log.info("🔹 [header_filter] kong.log is working.")
+end
 
-    local services, err = kong.db.services:select_all()
+function ListServicesHandler:body_filter(conf)
+    kong.log.info("🔹 [body_filter] kong.log is working.")
+end
 
-    if err then
-        kong.log.err("❌ Error fetching services: ", err)
-        return kong.response.exit(500, { error = "Failed to fetch services", details = err })
-    end
-
-    kong.log.info("✅ Successfully fetched services from database.")
-
-    local services_list = {}
-    for _, service in ipairs(services) do
-        table.insert(services_list, {
-            id = service.id,
-            name = service.name,
-            host = service.host,
-            path = service.path,
-            port = service.port,
-            protocol = service.protocol
-        })
-    end
-
-    return kong.response.exit(200, services_list)
+function ListServicesHandler:log(conf)
+    kong.log.info("📝 [log] kong.log is working.")
 end
 
 return ListServicesHandler
